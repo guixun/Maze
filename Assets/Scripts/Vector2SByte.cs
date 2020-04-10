@@ -55,10 +55,6 @@ public struct Vector2SByte
 
     public override string ToString()
     {
-        return string.Format("({0}, {1})", new object[]
-        {
-                x,
-                z
-        });
+        return $"(x:{x},z:{z},orient:{orient})";
     }
 }

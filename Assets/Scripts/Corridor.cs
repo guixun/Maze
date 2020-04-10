@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LitJson;
 
 [Serializable]
 public struct Joint
@@ -11,7 +12,12 @@ public struct Joint
     public Orient orient;
 
     [SerializeField]
-    public Vector2SByte[] tiles; 
+    public Vector2SByte[] tiles;
+
+    public override string ToString()
+    {
+        return $"orient:{orient}";
+    }
 }
 
 
@@ -31,7 +37,6 @@ public class Corridor:MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(this.ToString());
     }
 
     public override string ToString()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum Orient:byte
 {
-    Null,
+    Null=0,
     Right,
     Left,
     Up,
@@ -14,107 +14,79 @@ public enum Orient:byte
 public class MazeBulider : MonoBehaviour
 {
     public int depth = 10;
-    //所有待选的走廊
-    private List<Corridor> corridors;
-    public GameObject corridor_I;
-    public GameObject corridor_L;
+
+#if Debug
+    public GameObject tilePrefab;
+#endif
+
+    public Corridor[] corridors;
+    private Vector3 curPos;
 
     public Dictionary<Vector2SByte[], Orient> mazeDirt=new Dictionary<Vector2SByte[], Orient>();
-    public bool[,] book = new bool[sbyte.MaxValue, sbyte.MaxValue];
+    public Dictionary<Vector3, bool> book = new Dictionary<Vector3, bool>();
 
     private void Start()
     {
-        
-        //InitCorridors();
+        curPos = new Vector3(0, 0 , 0);
+#if Debug
+        Instantiate(tilePrefab, curPos, Quaternion.identity);
+#endif
+
+        Corridor cor =Instantiate(corridors[Random.Range(0, corridors.Length)]);
+        Joint joint = cor.joints[Random.Range(0, cor.joints.Length)];
+        cor.transform.position = GetCorridorPos(joint);
+
+        foreach (Vector2SByte tile in joint.tiles)
+        {
+            Vector3 pos = new Vector3(curPos.x + tile.x, 2, curPos.z + tile.z);
+            book.Add(pos, true);
+#if Debug
+            Instantiate(tilePrefab, pos ,Quaternion.identity);
+#endif
+        }
+
+        joint.orient = Orient.Null;
+
+
     }
 
-    private void InitCorridors()
+    private Vector3 GetCorridorPos(Joint joint)
     {
-        //corridors = new List<Corridor>();
-        ////1
-        //Corridor tmp = new Corridor();
-        //tmp.tiles.Add(Orient.Right, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(-4,0,Orient.Right),
-        //    new Vector2SByte(-8,0,Orient.Null),
-        //    new Vector2SByte(-12,0,Orient.Left)
-        //});
-
-        //tmp.tiles.Add(Orient.Left, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(4,0,Orient.Left),
-        //    new Vector2SByte(8,0,Orient.Null),
-        //    new Vector2SByte(12,0,Orient.Right)
-        //});
-        //tmp.gameObject = corridor_I;
-        //corridors.Add(tmp);
-
-        ////2
-        //tmp = new Corridor();
-        //tmp.tiles.Add(Orient.Up, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(0,-4,Orient.Up),
-        //    new Vector2SByte(0,-8,Orient.Null),
-        //    new Vector2SByte(0,-12,Orient.Down)
-        //});
-
-        //tmp.tiles.Add(Orient.Down, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(0,4,Orient.Down),
-        //    new Vector2SByte(0,8,Orient.Null),
-        //    new Vector2SByte(0,12,Orient.Up)
-        //});
-        //tmp.gameObject = corridor_I;
-        //tmp.gameObject.transform.Rotate(new Vector3(0, 90, 0));
-        //corridors.Add(tmp);
-
-        ////4
-        //tmp = new Corridor();
-        //tmp.tiles.Add(Orient.Left, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(4,0,Orient.Left),
-        //    new Vector2SByte(8,0,Orient.Null),
-        //    new Vector2SByte(8,-4,Orient.Down)
-        //});
-        //tmp.tiles.Add(Orient.Down, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(0,4,Orient.Down),
-        //    new Vector2SByte(0,8,Orient.Null),
-        //    new Vector2SByte(-4,8,Orient.Left)
-        //});
-
-        //tmp.gameObject = corridor_L;
-        //tmp.gameObject.transform.Rotate(new Vector3(0, 90, 0));
-        //corridors.Add(tmp);
-
-        ////4
-        //tmp = new Corridor();
-        //tmp.tiles.Add(Orient.Left, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(4,0,Orient.Left),
-        //    new Vector2SByte(8,0,Orient.Null),
-        //    new Vector2SByte(8,-4,Orient.Down)
-        //});
-        //tmp.tiles.Add(Orient.Down, new Vector2SByte[]
-        //{
-        //    new Vector2SByte(0,4,Orient.Down),
-        //    new Vector2SByte(0,8,Orient.Null),
-        //    new Vector2SByte(-4,8,Orient.Left)
-        //});
-
-        //tmp.gameObject = corridor_L;
-        //tmp.gameObject.transform.Rotate(new Vector3(0, 90, 0));
-        //corridors.Add(tmp);
-
-        //Queue<Vector2SByte> queue = new Queue<Vector2SByte>();
-        //queue.Enqueue(Vector2SByte.Zero);
-        //while(queue!=null||queue.Count>0)
-        //{
-
-        //}
+        switch (joint.orient)
+        {
+            case Orient.Null:
+                Debug.LogError($"[MazeBulider] wran orient{joint.orient} ,please select orient in the corridor editor");
+                return Vector3.zero;
+            case Orient.Right:
+                return curPos + new Vector3(-8, 0, 0);
+            case Orient.Left:
+                return curPos + new Vector3(8, 0, 0);
+            case Orient.Up:
+                return curPos + new Vector3(0, 0, -8);
+            case Orient.Down:
+                return curPos + new Vector3(0, 0, 8);
+            default:
+                return Vector3.zero;
+        }
     }
 
-    private void GetUsableCorridor(Orient orient,Vector2SByte pos)
+    //private void InitCorridors()
+    //{
+
+    //    Queue<Vector2SByte> queue = new Queue<Vector2SByte>();
+    //    queue.Enqueue(Vector2SByte.Zero);
+    //    while (queue != null || queue.Count > 0)
+    //    {
+
+    //    }
+    //}
+
+    public void Build()
+    {
+
+    }
+
+    private void GetUseableCorridor(Orient orient,Vector2SByte pos)
     {
         //Corridor corridor;
         //foreach (var item in corridors)
