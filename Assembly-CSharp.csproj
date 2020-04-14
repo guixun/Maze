@@ -68,7 +68,8 @@
     <Compile Include="Assets\Scripts\MazeBulider.cs" />
     <Compile Include="Assets\Scripts\MazeBulider1.cs" />
     <Compile Include="Assets\Scripts\Test\TestCustom.cs" />
-    <Compile Include="Assets\Scripts\Vector2SByte.cs" />
+    <Compile Include="Assets\Scripts\Test\TestGetSet.cs" />
+    <Compile Include="Assets\Scripts\Tile.cs" />
     <None Include="Assets\Packages\Sci-Fi Styled Modular Pack\Readme.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Projects/Unity3D/Maze/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

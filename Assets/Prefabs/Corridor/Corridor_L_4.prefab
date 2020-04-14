@@ -64,6 +64,7 @@ MonoBehaviour:
   id: 4
   joints:
   - orient: 2
+    position: {x: 0, y: 0, z: 0}
     tiles:
     - x: 4
       z: 0
@@ -75,6 +76,7 @@ MonoBehaviour:
       z: 4
       orient: 3
   - orient: 3
+    position: {x: 0, y: 0, z: 0}
     tiles:
     - x: 0
       z: -4
@@ -84,7 +86,7 @@ MonoBehaviour:
       orient: 0
     - x: -4
       z: -8
-      orient: 1
+      orient: 2
 --- !u!1 &1617642401783421489
 GameObject:
   m_ObjectHideFlags: 0
