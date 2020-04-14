@@ -20,89 +20,133 @@ public class MazeBulider : MonoBehaviour
 #endif
 
     public Corridor[] corridors;
-    private Vector3 curPos;
+    private Vector3Int curPos;
 
-    public Dictionary<Vector2SByte[], Orient> mazeDirt=new Dictionary<Vector2SByte[], Orient>();
-    public Dictionary<Vector3, bool> book = new Dictionary<Vector3, bool>();
+    public Dictionary<Tile[], Orient> mazeDirt=new Dictionary<Tile[], Orient>();
+    public Dictionary<Vector3Int, bool> book = new Dictionary<Vector3Int, bool>();
 
     private void Start()
     {
-        curPos = new Vector3(0, 0 , 0);
+        InitCorridors();
+        Build();
+    }
+
+    private Vector3Int GetCorridorPos(Joint joint)
+    {
+        return GetCorridorPos(joint.orient);
+    }
+
+    private Vector3Int GetCorridorPos(Orient orient)
+    {
+        switch (orient)
+        {
+            case Orient.Null:
+                Debug.LogError($"[MazeBulider] wran orient{orient} ,please select orient in the corridor editor");
+                return Vector3Int.zero;
+            case Orient.Right:
+                return curPos + new Vector3Int(-8, 0, 0);
+            case Orient.Left:
+                return curPos + new Vector3Int(8, 0, 0);
+            case Orient.Up:
+                return curPos + new Vector3Int(0, 0, -8);
+            case Orient.Down:
+                return curPos + new Vector3Int(0, 0, 8);
+            default:
+                return Vector3Int.zero;
+        }
+    }
+
+    private void InitCorridors()
+    {
+        foreach (Corridor corridor in corridors)
+        {
+            corridor.Init();
+        }
+    }
+
+    public void Build()
+    {
+        curPos = new Vector3Int(0, 0, 0);
 #if Debug
         Instantiate(tilePrefab, curPos, Quaternion.identity);
 #endif
 
-        Corridor cor =Instantiate(corridors[Random.Range(0, corridors.Length)]);
+        Corridor cor = Instantiate(corridors[Random.Range(0, corridors.Length)]);
         Joint joint = cor.joints[Random.Range(0, cor.joints.Length)];
         cor.transform.position = GetCorridorPos(joint);
 
-        foreach (Vector2SByte tile in joint.tiles)
+        Debug.Log($"[MazeBulider] Put <color=red><b>\"{cor.name}\"</b></color> in <color=red><b>{cor.transform.position}</b></color>");
+
+        for (int i=0;i<joint.tiles.Length;i++)
         {
-            Vector3 pos = new Vector3(curPos.x + tile.x, 2, curPos.z + tile.z);
+            Tile tile = joint.tiles[i];
+            Vector3Int pos = new Vector3Int(curPos.x + tile.x, 2, curPos.z + tile.z);
             book.Add(pos, true);
+            tile.x = pos.x;
+            tile.z = pos.z;
+
 #if Debug
-            Instantiate(tilePrefab, pos ,Quaternion.identity);
+            Instantiate(tilePrefab, pos, Quaternion.identity);
+            Debug.Log($"[Debug] Position <color=green><b>{pos}</b></color> used");
 #endif
+
+            if (tile.orient != Orient.Null)
+            {
+                curPos.x = tile.x;
+                curPos.z = tile.z;
+#if Debug
+                Debug.Log($"[Debug] Find <color=green><b>{tile.orient}</b></color> can be used to connect other corridor");
+                Debug.Log($"[Debug] CurPos is <color=green><b>{curPos.ToString()}</b></color>");
+#endif
+                Corridor corridor = RandomGetUseableCorridor(tile.orient);
+                InsertCorridor(corridor, tile.orient);
+            }
         }
 
         joint.orient = Orient.Null;
-
-
     }
 
-    private Vector3 GetCorridorPos(Joint joint)
+    private Corridor RandomGetUseableCorridor(Orient orient)
     {
-        switch (joint.orient)
+        List<int> useableIndex = new List<int>();
+        orient = GetInvertQrient(orient);
+
+        for (int i=0;i<corridors.Length;i++)
         {
-            case Orient.Null:
-                Debug.LogError($"[MazeBulider] wran orient{joint.orient} ,please select orient in the corridor editor");
-                return Vector3.zero;
-            case Orient.Right:
-                return curPos + new Vector3(-8, 0, 0);
-            case Orient.Left:
-                return curPos + new Vector3(8, 0, 0);
-            case Orient.Up:
-                return curPos + new Vector3(0, 0, -8);
-            case Orient.Down:
-                return curPos + new Vector3(0, 0, 8);
-            default:
-                return Vector3.zero;
+            bool useable = true;
+            if (corridors[i].jointDir.ContainsKey(orient))
+            {
+                Tile[] tiles = corridors[i].jointDir[orient];
+                foreach (Tile tile in tiles)
+                {
+                    Vector3Int pos = new Vector3Int(curPos.x + tile.x, 2, curPos.z + tile.z);
+                    if (book.ContainsKey(pos))
+                    {
+                        useable = false;
+                        break;
+                    }          
+                }
+            }
+            else
+                useable = false;
+
+            if(useable)
+                useableIndex.Add(i);      
         }
+#if Debug
+        foreach (var item in useableIndex)
+            Debug.Log($"[Debug] Get useable corridor inex: <color=green><b>{item}</b></color>");
+#endif
+
+        Corridor corridor = corridors[Random.Range(0, useableIndex.Count)];
+        return corridor;
     }
 
-    //private void InitCorridors()
-    //{
-
-    //    Queue<Vector2SByte> queue = new Queue<Vector2SByte>();
-    //    queue.Enqueue(Vector2SByte.Zero);
-    //    while (queue != null || queue.Count > 0)
-    //    {
-
-    //    }
-    //}
-
-    public void Build()
+    private void InsertCorridor(Corridor prefab, Orient orient)
     {
-
-    }
-
-    private void GetUseableCorridor(Orient orient,Vector2SByte pos)
-    {
-        //Corridor corridor;
-        //foreach (var item in corridors)
-        //{
-        //    //1，方位匹配(备选块儿包含对应开口方向)
-        //    item.tiles.TryGetValue(GetInvertQrient(orient), out Vector2SByte[] tiles);
-        //    if (item.tiles.ContainsKey(GetInvertQrient(orient)))
-        //    {
-        //        //2，位置匹配(即目标位置没有被遮挡)
-        //        //item.tiles.
-        //    }
-        //}
-    }
-
-    private void InsertCorridor(int x,int z)
-    {
+        Corridor cor = Instantiate(prefab);
+        cor.transform.position = GetCorridorPos(GetInvertQrient(orient));
+        Debug.Log($"[MazeBulider] Put <color=red><b>\"{cor.name}\"</b></color> in <color=red><b>{cor.transform.position}</b></color>");
 
     }
 
@@ -122,9 +166,4 @@ public class MazeBulider : MonoBehaviour
         Debug.LogError("[MazeBulider.GetInvertQrient] warn orient!");
         return Orient.Null;
     }
-
-    //public List<Corridor> CreateMaze(int x, int y)
-    //{
-
-    //}
 }

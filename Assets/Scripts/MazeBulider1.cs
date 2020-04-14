@@ -51,7 +51,7 @@
 //                }
 //                else
 //                {
-//                    sb.Append("<color=red>国</color>");
+//                    sb.Append("<color=green>国</color>");
 //                }
 //            }
 //            sb.Append("\n");

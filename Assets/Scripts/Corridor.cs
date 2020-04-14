@@ -5,14 +5,14 @@ using UnityEngine;
 using LitJson;
 
 [Serializable]
-public struct Joint
+public class Joint
 {
     [SerializeField]
     [Tooltip("可使用的接口")]
     public Orient orient;
-
+    public Vector3Int position;
     [SerializeField]
-    public Vector2SByte[] tiles;
+    public Tile[] tiles;
 
     public override string ToString()
     {
@@ -25,7 +25,7 @@ public class Corridor:MonoBehaviour
 {
     public int id;
     public Joint[] joints;
-    public Dictionary<Orient, Vector2SByte[]> jointDir = new Dictionary<Orient, Vector2SByte[]>();
+    public Dictionary<Orient, Tile[]> jointDir = new Dictionary<Orient, Tile[]>();
 
     public void Init()
     {
