@@ -1114,22 +1114,58 @@ MonoBehaviour:
   joints:
   - orient: 2
     tiles:
-    - x: 0
+    - x: 4
       z: 0
+      position: {x: 0, y: 0, z: 0}
       orient: 0
-    - x: 0
+    - x: 8
       z: 0
+      position: {x: 0, y: 0, z: 0}
       orient: 0
-    - x: 0
+    - x: 8
+      z: -4
+      position: {x: 0, y: 0, z: 0}
+      orient: 4
+    - x: 12
       z: 0
-      orient: 0
-    - x: 0
-      z: 0
-      orient: 0
+      position: {x: 0, y: 0, z: 0}
+      orient: 1
   - orient: 1
-    tiles: []
+    tiles:
+    - x: -4
+      z: 0
+      position: {x: 0, y: 0, z: 0}
+      orient: 0
+    - x: -8
+      z: 0
+      position: {x: 0, y: 0, z: 0}
+      orient: 0
+    - x: -8
+      z: -4
+      position: {x: 0, y: 0, z: 0}
+      orient: 4
+    - x: -12
+      z: 0
+      position: {x: 0, y: 0, z: 0}
+      orient: 2
   - orient: 4
-    tiles: []
+    tiles:
+    - x: -4
+      z: 8
+      position: {x: 0, y: 0, z: 0}
+      orient: 2
+    - x: 0
+      z: 8
+      position: {x: 0, y: 0, z: 0}
+      orient: 0
+    - x: 4
+      z: 8
+      position: {x: 0, y: 0, z: 0}
+      orient: 1
+    - x: 0
+      z: 4
+      position: {x: 0, y: 0, z: 0}
+      orient: 0
 --- !u!1 &3657113927356238141
 GameObject:
   m_ObjectHideFlags: 0

@@ -61,29 +61,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f3bb1fd2056a843a51b615ae10bc2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 4
+  id: 5
   joints:
   - orient: 3
     tiles:
     - x: 0
       z: -4
+      position: {x: 0, y: 0, z: 0}
       orient: 0
     - x: 0
       z: -8
+      position: {x: 0, y: 0, z: 0}
       orient: 0
     - x: 4
       z: -8
+      position: {x: 0, y: 0, z: 0}
       orient: 1
   - orient: 1
     tiles:
     - x: -4
       z: 0
+      position: {x: 0, y: 0, z: 0}
       orient: 0
     - x: -8
       z: 0
+      position: {x: 0, y: 0, z: 0}
       orient: 0
     - x: -8
       z: 4
+      position: {x: 0, y: 0, z: 0}
       orient: 3
 --- !u!1 &1617642401783421489
 GameObject:

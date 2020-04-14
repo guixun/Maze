@@ -10,7 +10,6 @@ public class Joint
     [SerializeField]
     [Tooltip("可使用的接口")]
     public Orient orient;
-    public Vector3Int position;
     [SerializeField]
     public Tile[] tiles;
 
@@ -27,16 +26,17 @@ public class Corridor:MonoBehaviour
     public Joint[] joints;
     public Dictionary<Orient, Tile[]> jointDir = new Dictionary<Orient, Tile[]>();
 
+    private void OnEnable()
+    {
+        Init();
+    }
+
     public void Init()
     {
         foreach (Joint joint in joints)
         {
             jointDir[joint.orient] = joint.tiles;
         }
-    }
-
-    private void Update()
-    {
     }
 
     public override string ToString()

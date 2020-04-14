@@ -240,6 +240,11 @@ MonoBehaviour:
   - {fileID: 8822273826162754043, guid: dab3cb8af9257974397b94ea8cedf567, type: 3}
   - {fileID: 8822273826162754043, guid: 0c4d578c63a6f784e88313a7fefb29ee, type: 3}
   - {fileID: 8822273826162754043, guid: c48763f6976397946bc8f316ae14e7f0, type: 3}
+  - {fileID: 8970140519242442182, guid: a4fe8c793e4f85a4396420eb9e3c2b35, type: 3}
+  - {fileID: 8970140519242442182, guid: a56e24183f27081468f8c0544bc5294d, type: 3}
+  - {fileID: 8970140519242442182, guid: 709ac8c2f0f53164e88e4ea02b9af7b0, type: 3}
+  - {fileID: 8970140519242442182, guid: 6b87456aa602bbd469b81ccef3e96d83, type: 3}
+  - {fileID: 5885218208797262788, guid: f65ccdbc952733948abffbad50d14dd4, type: 3}
 --- !u!1 &834277513
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,7 +319,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 3.0092666e-36, y: 1.009742e-28, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

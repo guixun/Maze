@@ -8,6 +8,8 @@ public class Tile
 {
     public int x;
     public int z;
+    [HideInInspector]
+    public Vector3Int position;
     public Orient orient;
     public static Tile Zero { get; } = new Tile(0, 0, Orient.Null);
 

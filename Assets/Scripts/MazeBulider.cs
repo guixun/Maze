@@ -17,6 +17,7 @@ public class MazeBulider : MonoBehaviour
 
 #if Debug
     public GameObject tilePrefab;
+    private Vector3Int tilePosOffset = new Vector3Int(0, 2, 0);
 #endif
 
     public Corridor[] corridors;
@@ -68,7 +69,7 @@ public class MazeBulider : MonoBehaviour
     {
         curPos = new Vector3Int(0, 0, 0);
 #if Debug
-        Instantiate(tilePrefab, curPos, Quaternion.identity);
+        Instantiate(tilePrefab, curPos + tilePosOffset, Quaternion.identity);
 #endif
 
         Corridor cor = Instantiate(corridors[Random.Range(0, corridors.Length)]);
@@ -80,30 +81,31 @@ public class MazeBulider : MonoBehaviour
         for (int i=0;i<joint.tiles.Length;i++)
         {
             Tile tile = joint.tiles[i];
-            Vector3Int pos = new Vector3Int(curPos.x + tile.x, 2, curPos.z + tile.z);
-            book.Add(pos, true);
-            tile.x = pos.x;
-            tile.z = pos.z;
+            tile.position = new Vector3Int(curPos.x + tile.x, 0, curPos.z + tile.z);
+            book.Add(tile.position, true);
 
 #if Debug
-            Instantiate(tilePrefab, pos, Quaternion.identity);
-            Debug.Log($"[Debug] Position <color=green><b>{pos}</b></color> used");
+            Instantiate(tilePrefab, tile.position + tilePosOffset, Quaternion.identity);
+            Debug.Log($"[Debug] Position <color=green><b>{tile.position}</b></color> used");
 #endif
+        }
 
+        for (int i = 0; i < joint.tiles.Length; i++)
+        {
+            Tile tile = joint.tiles[i];
             if (tile.orient != Orient.Null)
             {
-                curPos.x = tile.x;
-                curPos.z = tile.z;
+                curPos = tile.position;
 #if Debug
                 Debug.Log($"[Debug] Find <color=green><b>{tile.orient}</b></color> can be used to connect other corridor");
                 Debug.Log($"[Debug] CurPos is <color=green><b>{curPos.ToString()}</b></color>");
 #endif
                 Corridor corridor = RandomGetUseableCorridor(tile.orient);
-                InsertCorridor(corridor, tile.orient);
+                InsertCorridor(corridor, GetInvertQrient(tile.orient), 0);
             }
         }
 
-        joint.orient = Orient.Null;
+        //joint.orient = Orient.Null;
     }
 
     private Corridor RandomGetUseableCorridor(Orient orient)
@@ -119,7 +121,7 @@ public class MazeBulider : MonoBehaviour
                 Tile[] tiles = corridors[i].jointDir[orient];
                 foreach (Tile tile in tiles)
                 {
-                    Vector3Int pos = new Vector3Int(curPos.x + tile.x, 2, curPos.z + tile.z);
+                    Vector3Int pos = new Vector3Int(curPos.x + tile.x, 0, curPos.z + tile.z);
                     if (book.ContainsKey(pos))
                     {
                         useable = false;
@@ -142,12 +144,43 @@ public class MazeBulider : MonoBehaviour
         return corridor;
     }
 
-    private void InsertCorridor(Corridor prefab, Orient orient)
+    private void InsertCorridor(Corridor prefab, Orient orient,int depth)
     {
+        if(depth>=4)
+        {
+            return;
+        }
         Corridor cor = Instantiate(prefab);
-        cor.transform.position = GetCorridorPos(GetInvertQrient(orient));
+        cor.transform.position = GetCorridorPos(orient);
         Debug.Log($"[MazeBulider] Put <color=red><b>\"{cor.name}\"</b></color> in <color=red><b>{cor.transform.position}</b></color>");
+        //Debug.Log(orient);
+        Tile[] tiles = cor.jointDir[orient];
 
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            Tile tile = tiles[i];
+            tile.position = new Vector3Int(curPos.x + tile.x, 0, curPos.z + tile.z);
+            book.Add(tile.position, true);
+#if Debug
+            Instantiate(tilePrefab, tile.position + tilePosOffset, Quaternion.identity);
+            Debug.Log($"[Debug] Position <color=green><b>{tile.position}</b></color> used");
+#endif
+        }
+
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            Tile tile = tiles[i];
+            if (tile.orient != Orient.Null)
+            {
+                curPos = tile.position;
+#if Debug
+                Debug.Log($"[Debug] Find <color=green><b>{tile.orient}</b></color> can be used to connect other corridor");
+                Debug.Log($"[Debug] CurPos is <color=green><b>{curPos.ToString()}</b></color>");
+#endif
+                Corridor corridor = RandomGetUseableCorridor(tile.orient);
+                InsertCorridor(corridor, GetInvertQrient(tile.orient), depth + 1);
+            }
+        }
     }
 
     private Orient GetInvertQrient(Orient orient)
