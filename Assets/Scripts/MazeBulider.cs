@@ -138,7 +138,7 @@ public class MazeBulider : MonoBehaviour
             Debug.Log($"[Debug] Get useable corridor inex: <color=green><b>{item}</b></color>");
 #endif
 
-        Corridor corridor = corridors[Random.Range(0, useableIndex.Count)];
+        Corridor corridor = corridors[useableIndex[Random.Range(0, useableIndex.Count)]];
         return corridor;
     }
 
