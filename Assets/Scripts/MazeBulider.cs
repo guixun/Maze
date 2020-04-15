@@ -21,6 +21,7 @@ public class MazeBulider : MonoBehaviour
 #endif
 
     public Corridor[] corridors;
+    public GameObject wallpPrefab;
     private Vector3Int curPos;
 
     public Dictionary<Tile[], Orient> mazeDirt=new Dictionary<Tile[], Orient>();
@@ -55,6 +56,38 @@ public class MazeBulider : MonoBehaviour
             default:
                 return Vector3Int.zero;
         }
+    }
+
+    private void InsertWall(Orient orient)
+    {
+        Transform wallTrans = Instantiate(wallpPrefab).transform;
+        Vector3Int pos = Vector3Int.zero;
+        Vector3Int rotate = Vector3Int.zero;
+        switch (orient)
+        {
+            case Orient.Right:
+                pos = new Vector3Int(curPos.x + 2, 0, curPos.z);
+                rotate = new Vector3Int(0, 270, 0);
+                break;
+            case Orient.Left:
+                pos = new Vector3Int(curPos.x - 2, 0, curPos.z);
+                rotate = new Vector3Int(0, 90, 0);
+                break;
+            case Orient.Up:
+                pos = new Vector3Int(curPos.x, 0, curPos.z+2);
+                rotate = new Vector3Int(0, 180, 0);
+                break;
+            case Orient.Down:
+                pos = new Vector3Int(curPos.x, 0, curPos.z - 2);
+                rotate = new Vector3Int(0, 0, 0);
+                break;
+            default:
+                Debug.LogError($"[MazeBulider] wran orient{orient} ,please select orient in the corridor editor");
+                break;
+        }
+        wallTrans.position = pos;
+        wallTrans.eulerAngles = rotate;
+        Debug.Log($"[MazeBulider] Put <color=red><b>\"Wall\"</b></color> in <color=red><b>{pos}</b></color>");
     }
 
     private void InitCorridors()
@@ -101,11 +134,13 @@ public class MazeBulider : MonoBehaviour
                 Debug.Log($"[Debug] CurPos is <color=green><b>{curPos.ToString()}</b></color>");
 #endif
                 Corridor corridor = RandomGetUseableCorridor(tile.orient);
-                InsertCorridor(corridor, GetInvertQrient(tile.orient), 0);
+
+                if(corridor!=null)
+                    InsertCorridor(corridor, GetInvertQrient(tile.orient), 0);
+                else
+                    InsertWall(tile.orient);
             }
         }
-
-        //joint.orient = Orient.Null;
     }
 
     private Corridor RandomGetUseableCorridor(Orient orient)
@@ -138,16 +173,22 @@ public class MazeBulider : MonoBehaviour
 #if Debug
         foreach (var item in useableIndex)
             Debug.Log($"[Debug] Get useable corridor inex: <color=green><b>{item}</b></color>");
-#endif
 
-        Corridor corridor = corridors[useableIndex[Random.Range(0, useableIndex.Count)]];
+        if(useableIndex.Count == 0||useableIndex==null)
+            Debug.Log($"[Debug] <color=red><b>Can not find any useable corridor!</color></b>");
+#endif
+        Corridor corridor = null;
+        if (useableIndex.Count>0)
+            corridor = corridors[useableIndex[Random.Range(0, useableIndex.Count)]];
+
         return corridor;
     }
 
     private void InsertCorridor(Corridor prefab, Orient orient,int depth)
     {
-        if(depth>=4)
+        if(depth>=40)
         {
+            InsertWall(GetInvertQrient(orient));
             return;
         }
         Corridor cor = Instantiate(prefab);
@@ -178,7 +219,10 @@ public class MazeBulider : MonoBehaviour
                 Debug.Log($"[Debug] CurPos is <color=green><b>{curPos.ToString()}</b></color>");
 #endif
                 Corridor corridor = RandomGetUseableCorridor(tile.orient);
-                InsertCorridor(corridor, GetInvertQrient(tile.orient), depth + 1);
+                if (corridor != null)
+                    InsertCorridor(corridor, GetInvertQrient(tile.orient), depth + 1);
+                else
+                    InsertWall(tile.orient);
             }
         }
     }

@@ -231,8 +231,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   depth: 10
-  tilePrefab: {fileID: 621382130136691123, guid: 5ebe5cfcaa5bd744baa0a635b850b66c,
-    type: 3}
   corridors:
   - {fileID: 8042457623773087223, guid: b8b812e40ef8b214897b722311b26214, type: 3}
   - {fileID: 8042457623773087223, guid: 6174636796f34f046937598b3a10ffd1, type: 3}
@@ -245,6 +243,8 @@ MonoBehaviour:
   - {fileID: 8970140519242442182, guid: 709ac8c2f0f53164e88e4ea02b9af7b0, type: 3}
   - {fileID: 8970140519242442182, guid: 6b87456aa602bbd469b81ccef3e96d83, type: 3}
   - {fileID: 5885218208797262788, guid: f65ccdbc952733948abffbad50d14dd4, type: 3}
+  wallpPrefab: {fileID: 9000645920121075826, guid: cd9492cbef4a92e468078dfd681f83f7,
+    type: 3}
 --- !u!1 &834277513
 GameObject:
   m_ObjectHideFlags: 0
